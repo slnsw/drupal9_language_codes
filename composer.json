@@ -1,0 +1,10 @@
+{
+  "name": "drupal/language_codes",
+  "description": "Provides language list with codes",
+  "type": "drupal-module",
+  "homepage": "http://drupal.org/project/language_codes",
+  "require": {
+    "umpirsky/language-list/": "master"
+  }
+  
+}
