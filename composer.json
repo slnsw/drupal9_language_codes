@@ -8,5 +8,8 @@
             "url": "https://github.com/umpirsky/language-list.git",
             "type": "git"
         }
-    ]
+    ],
+   "require-dev": {
+        "umpirsky/list-generator": "^1.1",
+    }
 }
