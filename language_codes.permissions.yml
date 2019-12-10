@@ -1,0 +1,4 @@
+language_codes administration:
+ title: 'Administer Language Codes'
+ description: 'Perform administration of Language codes'
+ restrict access: false  

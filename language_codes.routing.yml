@@ -1,0 +1,14 @@
+language_codes.admin:
+ path: '/admin/config/system/language_codes'
+ defaults:
+  _form: '\Drupal\language_codes\Form\LanguageCodesSettingsForm'
+  _title: 'Language Codes'
+ requirements:
+  _permission: 'language_codes administration'
+language_codes.languagelist:
+  path: '/languagecodes/languagelist/{field_name}/{count}'
+  defaults:
+    _controller: '\Drupal\language_codes\Controller\LanguageCodesController::getLanguageList'
+    _format: json
+  requirements:
+    _access: 'TRUE'  

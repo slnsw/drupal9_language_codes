@@ -3,3 +3,5 @@ name: Language Codes
 description: 'Provides language list with codes'
 package: locale
 core: 8.x
+
+configure: language_codes.admin

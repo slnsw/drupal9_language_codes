@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\Routing\Form\RouteMatchInterface.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+/**
+ * Implements hook_help().
+ */
+function language_codes_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.language_codes':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Language codes which provides language codes list in all locale also it can selected and generated as taxonomy term.') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+
+      $output .= '<dt>' . t('Configuring ') . '</dt>';
+      $output .= '<dd>' . t('Language Codes module provides page for configuring the necessary <a href=":config">Language codes settings</a>. and generate language terms. ', [':config' => \Drupal::url('language_codes.admin')]) . '</dd>';
+
+      $output .= '</dl>';
+      return $output;
+
+    case 'language_codes.admin':
+      return '<p>' . t('This page shows you all available administration tasks for Language Codes module.') . '</p>';
+
+  }
+}

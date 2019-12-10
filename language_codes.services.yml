@@ -1,0 +1,5 @@
+services:
+  language_codes.manager:
+    class: Drupal\language_codes\Service\LanguageCodes
+    arguments: ['@config.factory']
+
