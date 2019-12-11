@@ -117,7 +117,7 @@ $form['generate'] = array(
     );
 
     $form['generate']['fields'] = array(
-      '#title' => t('Select a Field to add language code'),
+      '#title' => t('Select a Vocabulary Field to add language code'),
       '#type' => 'select',
       '#description' => t('By default Term name will be Language Name and code needs one more field to be save, this selected field will have language code for the seleceted vocabulary type.'),
       '#options' => [],
@@ -125,11 +125,58 @@ $form['generate'] = array(
       '#id' => 'language_codes_fields'
     );
 
-    $form['generate']['code_as_name'] = array(
+   /* $form['generate']['code_as_name'] = array(
       '#title' => t('Create Language code as Term Name'),
       '#type' => 'checkbox',
       '#description' => t('Select this option if you want to create language code as term name and use the above selected field to save language name'),
+    );*/
+	$form['generate']['generation_type'] = array(
+	  '#type' => 'radios',
+	  '#title' => $this
+	    ->t('Term Generation Type'),
+	  '#default_value' => 0,
+	  '#options' => array(
+	    0 => $this->t('Generate Both Language Code & Name'),
+	    1 => $this->t('Generate Only Language Name as Term Name'),
+	    2 => $this->t('Generate Only Language Code as Term Name'),
+	    3 => $this->t('Generate Both & Create Language Code as Term Name'),
+	  ),
+	);
+
+	$form['generate']['name_format'] = array(
+	  '#type' => 'radios',
+	  '#title' => $this
+	    ->t('Language Name Generation Format'),
+	  '#default_value' => 0,
+	  '#options' => array(
+	    0 => $this->t('Default Name of language or locale (eg) Chinese (Simplified Han, Hong Kong SAR China)'),
+	    1 => $this->t('Name with Code appended (eg) Chinese (Simplified Han, Hong Kong SAR China)-zh_Hans_HK'),
+	    2 => $this->t('Name with Code prepend (eg) zh_Hans_HK-Chinese (Simplified Han, Hong Kong SAR China)'),
+	    3 => $this->t('Name with Code in bracket appended(eg) Chinese (Simplified Han, Hong Kong SAR China)(zh_Hans_HK)'),
+	    4 => $this->t('Name with Code in bracket prepended(eg) (zh_Hans_HK)Chinese (Simplified Han, Hong Kong SAR China)'),
+	    5 => $this->t('Name with Code in square bracket appended(eg) Chinese (Simplified Han, Hong Kong SAR China)[zh_Hans_HK]'),
+	    6 => $this->t('Name with Code in square bracket prepended(eg) [zh_Hans_HK]Chinese (Simplified Han, Hong Kong SAR China)'),
+	  ),
+	);
+
+    $form['generate']['delimiter'] = array(
+    	'#type' => 'textfield',
+        '#title' => 'Delimiter for combining language name & code',
+        '#description' => 'If you selected option 2or 3 in the above language name generation format this field will be used to concat/combine the name and code',
+        '#default_value' => '-',
     );
+
+	$form['generate']['code_format'] = array(
+	  '#type' => 'radios',
+	  '#title' => $this->t('Language Code Generation Format'),
+	  '#default_value' => 0,
+	  '#options' => array(
+	    0 => $this->t('Default (eg) zh_Hans_HK'),
+	    1 => $this->t('Full Lower Case (eg) zh_hans_hk'),
+	    2 => $this->t('Full Upper Case (eg) ZH_HANS_HK'),
+	  ),
+	);
+
 
       $form['generate']['generate_now'] = [
         '#type' => 'submit',
@@ -183,32 +230,71 @@ $base_language = trim($form_state->getValue('base_language'));
 
   public function generateTerm(array &$form, FormStateInterface $form_state) {
     //print_r($form_state->getValue('fields'));  print_r($form_state->getValue('generate_now')); die;
-     if($form_state->getValue('fields') != "") {
+    if(empty($form_state->getValue('fields')) && $form_state->getValue('generation_type') == 0){
+        drupal_set_message($this->t('Vocabulary Field cannot be empty when generating both language name and code'), 'error');
+        $form_state->setRebuild();
+    	return FALSE; 
+    } 
+ //    if($form_state->getValue('fields') != "") {
         $code_as_name = $form_state->getValue('code_as_name');
         $vocabulary = $form_state->getValue('vocabulary');
         $field = $form_state->getValue('fields');
+        $genType = $form_state->getValue('generation_type');
+        $nameFormat = $form_state->getValue('name_format');
+        $delimiter = $form_state->getValue('delimiter');
+        $codeFormat = $form_state->getValue('code_format');
+
         $langManager = \Drupal::service("language_codes.manager");
         $results = $langManager->getSelectedLanguageList();
         $i = 1;
-          foreach($results as $key => $value ) {
-  $name = $value;
-  $field_value = $key;
-  if($code_as_name == TRUE) {
-  $name = $key;
-  $field_value = $value;
-  }
-  if(!$this->checkTermExist($name, $vocabulary)) {
-  $term = Term::create([
-    'name' => $name, 
-    'vid' => $vocabulary,
-  ]);
-  $term->set($field, $field_value);
-  $term->save();
-  $i++;
-  }
-  }
-if($i > 0) drupal_set_message($this->t("Language Terms created successfully"));
-      }
+	  foreach($results as $key => $value ) {
+		  $name = $value;
+		  $field_value = $key;
+
+		  switch ($codeFormat) {
+		  	case 1:
+		  		$field_value = strtolower($field_value);
+		  	break;
+		  	case 2:
+		  		$field_value = strtoupper($field_value);
+		    break;
+		  
+		  }
+		  switch ($nameFormat) {
+		  	case 1:
+		  		$name = $name.$delimiter.$field_value;
+		  	case 2:
+		  		$name = $field_value.$delimiter.$name;
+		    break;
+		    case 3:
+		  		$name = $name.'('.$field_value.')';
+		    break;
+		    case 4:
+		  		$name = '('.$field_value.')'.$name;
+		    break;
+		    case 5:
+		  		$name = $name.'['.$field_value.']';
+		    break;
+		    case 6:
+		  		$name = '['.$field_value.']'.$name;
+		    break;
+		  }
+/*	  if($code_as_name == TRUE) {
+		  $name = $key;
+		  $field_value = $value;
+	  }*/
+	  if(!$this->checkTermExist($name, $vocabulary)) {
+		  $term = Term::create([
+		    'name' => $genType == 2 || $genType == 4 ? $field_value : $name, 
+		    'vid' => $vocabulary,
+		  ]);
+		  if($genType == 0 &&  $genType == 4) $term->set($field, $field_value);
+		  $term->save();
+		  $i++;
+	   }
+	  }
+	if($i > 0) drupal_set_message($this->t("Language Terms created successfully"));
+     // }
   } 
 
   public function checkTermExist($name, $vid) {
