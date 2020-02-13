@@ -1,5 +1,5 @@
 type: module
-name: Language Codes
+name: Generate Language Taxonomy
 description: 'Provides language list with codes'
 package: locale
 core: 8.x
