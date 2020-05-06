@@ -211,19 +211,15 @@ public function getFieldsList(array &$element, FormStateInterface $form_state) {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    $config = $this->config('language_codes.settings');
-$base_language = trim($form_state->getValue('base_language'));
- $table = $form_state->getValue('table'); 
-         if($base_language != $config->get('base_language')) {
-          array_walk($table, function (&$v, $k) { $v = 0; }); 
-         }
-
-   $this->config('language_codes.settings', $base_language)
-      ->set('base_language', $base_language);
-
-  $this->config('language_codes.settings')->set('language_list',$table);
-  
-   $this->config('language_codes.settings')->save(); 
+    $config = \Drupal::service('config.factory')->getEditable('language_codes.settings');
+    $base_language = trim($form_state->getValue('base_language'));
+    $table = $form_state->getValue('table'); 
+    if($base_language != $config->get('base_language')) {
+      array_walk($table, function (&$v, $k) { $v = 0; }); 
+    }
+    $config->set('base_language', $base_language);
+    $config->set('language_list',$table);
+    $config->save(); 
       
     parent::submitForm($form, $form_state);
   }
