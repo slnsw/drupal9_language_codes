@@ -38,7 +38,7 @@ class LanguageCodesSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('language_codes.settings');
-
+    $default_base_language =  $config->get('base_language') ? $config->get('base_language') : 'i18n';
     $form['base_language'] = array(
         '#title' => 'Language code listing language/format',
         '#description' => 'Search by lang code (ex). en_US. Please don\'t change this field if you get the correct list table , if you wish to get the language list in the native language then you can change. for example if you want the language Names to be shown in chinese or japanese or france or german or mandrin etc.',
@@ -63,7 +63,7 @@ $header = [
 // Initialize an empty array
 $output = array();
 $langManager = \Drupal::service("language_codes.manager");
-$results = $langManager->getLanguageList($config->get('base_language'), FALSE);
+$results = $langManager->getLanguageList($default_base_language, FALSE);
 // Next, loop through the $results array
 foreach ($results as $key => $value) {
 
@@ -281,10 +281,10 @@ public function getFieldsList(array &$element, FormStateInterface $form_state) {
 	  }*/
 	  if(!$this->checkTermExist($name, $vocabulary)) {
 		  $term = Term::create([
-		    'name' => $genType == 2 || $genType == 4 ? $field_value : $name, 
+		    'name' => $genType == 2 || $genType == 3 ? $field_value : $name, 
 		    'vid' => $vocabulary,
 		  ]);
-		  if($genType == 0 &&  $genType == 4) $term->set($field, $field_value);
+		  if($genType == 0 ||  $genType == 3) $term->set($field, $field_value);
 		  $term->save();
 		  $i++;
 	   }
