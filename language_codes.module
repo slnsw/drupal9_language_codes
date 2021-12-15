@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Url;
 /**
  * @file
  * Contains \Drupal\Routing\Form\RouteMatchInterface.
@@ -19,7 +20,7 @@ function language_codes_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<dl>';
 
       $output .= '<dt>' . t('Configuring ') . '</dt>';
-      $output .= '<dd>' . t('Generate Language Taxonomy module provides page for configuring the necessary <a href=":config">Generate Language Taxonomy settings</a>. and generate language terms. ', [':config' => \Drupal::url('language_codes.admin')]) . '</dd>';
+      $output .= '<dd>' . t('Generate Language Taxonomy module provides page for configuring the necessary <a href=":config">Generate Language Taxonomy settings</a>. and generate language terms. ', [':config' => Url::fromRoute('language_codes.admin')->toString()]) . '</dd>';
 
       $output .= '</dl>';
       return $output;

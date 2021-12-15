@@ -20,7 +20,7 @@ class LanguageCodesController extends ControllerBase {
     $results = [];
     if ($input = $request->query->get('q')) {
       $typed_string = Tags::explode($input);
-      $typed_string = Unicode::strtolower(array_pop($typed_string));
+      $typed_string = mb_strtolower(array_pop($typed_string));
       $manager = \Drupal::Service('language_codes.manager');
       $result = $manager->searchLanguage($typed_string,TRUE);
       $i = 1;

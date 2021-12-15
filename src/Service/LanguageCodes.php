@@ -80,7 +80,7 @@ public function __construct(ConfigFactoryInterface $config_factory) {
   public function getFields($entity_type,$bundle) {
     $entity_type_id = $entity_type;
     $bundle = $bundle;
-    foreach (\Drupal::entityManager()->getFieldDefinitions($entity_type_id, $bundle) as $field_name => $field_definition) {
+    foreach (\Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $bundle) as $field_name => $field_definition) {
      // if (!empty($field_definition->getTargetBundle())) {
         $bundleFields[$field_name]['type'] = $field_definition->getType();
         $bundleFields[$field_name]['label'] = $field_definition->getLabel();

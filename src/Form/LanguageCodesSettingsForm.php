@@ -227,7 +227,7 @@ public function getFieldsList(array &$element, FormStateInterface $form_state) {
   public function generateTerm(array &$form, FormStateInterface $form_state) {
     //print_r($form_state->getValue('fields'));  print_r($form_state->getValue('generate_now')); die;
     if(empty($form_state->getValue('fields')) && $form_state->getValue('generation_type') == 0){
-        drupal_set_message($this->t('Vocabulary Field cannot be empty when generating both language name and code'), 'error');
+        $this->messenger()->addError($this->t('Vocabulary Field cannot be empty when generating both language name and code'));
         $form_state->setRebuild();
     	return FALSE; 
     } 
@@ -254,7 +254,7 @@ public function getFieldsList(array &$element, FormStateInterface $form_state) {
 		  	case 2:
 		  		$field_value = strtoupper($field_value);
 		    break;
-		  
+
 		  }
 		  switch ($nameFormat) {
 		  	case 1:
@@ -289,7 +289,7 @@ public function getFieldsList(array &$element, FormStateInterface $form_state) {
 		  $i++;
 	   }
 	  }
-	if($i > 0) drupal_set_message($this->t("Language Terms created successfully"));
+	if($i > 0) $this->messenger()->addStatus($this->t("Language Terms created successfully"));
      // }
   } 
 
