@@ -1,0 +1,8 @@
+{
+    "name": "drupal/language_codes",
+    "description": "Provides language taxonomy.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "require": {}
+}
